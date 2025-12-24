@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade Hub</title>
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #8b5cf6;
+            --primary-hover: #a78bfa;
+            --success: #34C759;
+            --warning: #FF9500;
+            --error: #FF3B30;
+            --text: #ffffff;
+            --text-muted: #c4b5fd;
+            --background: #000000;
+            --surface: rgba(255, 255, 255, 0.03);
+            --surface-solid: #1a1a2e;
+            --on-surface: #ffffff;
+            --on-surface-variant: #c4b5fd;
+            --border: rgba(139, 92, 246, 0.3);
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        *::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 10px;
+        }
+
+        *::-webkit-scrollbar-thumb:hover {
+            background-color: var(--primary-hover);
+        }
+
+        *::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            background: #000000;
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #000000 0%, #0a0015 50%, #000000 100%);
+            z-index: -2;
+        }
+
+        /* Animated stars effect */
+        body::after {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 200%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, white, transparent),
+                radial-gradient(2px 2px at 60px 70px, white, transparent),
+                radial-gradient(1px 1px at 50px 50px, white, transparent),
+                radial-gradient(1px 1px at 130px 80px, white, transparent),
+                radial-gradient(2px 2px at 90px 150px, white, transparent),
+                radial-gradient(1px 1px at 160px 120px, white, transparent),
+                radial-gradient(2px 2px at 200px 50px, white, transparent),
+                radial-gradient(1px 1px at 80px 180px, white, transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.4;
+            animation: starsMove 100s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes starsMove {
+            from { transform: translateY(0); }
+            to { transform: translateY(-50%); }
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Header / Topbar */
+        .topbar-container {
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Space Grotesk', sans-serif;
+            white-space: nowrap;
+        }
+
+        .topbar-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 0.75rem;
+            color: var(--text-muted);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .topbar-toggle:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+        }
+
+        .topbar-toggle-selected {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+        .search-input {
+            flex-grow: 1;
+            min-width: 200px;
+            padding: 0.875rem 1.25rem;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            color: var(--text);
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .feedback-a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.75rem;
+            color: white;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .feedback-a:hover {
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Buttons */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.75rem;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .button:hover {
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Main Content / List Container */
+        #list-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            padding-bottom: 6rem;
+        }
+
+        #list-container .item-container {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #list-container .item-container:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(139, 92, 246, 0.5);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+        }
+
+        #list-container span {
+            padding: 1rem;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text);
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        #list-container .seperator {
+            flex-grow: 1;
+        }
+
+        #list-container .button-container {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0 1rem 1rem;
+            justify-content: center;
+        }
+
+        #list-container .play-button {
+            flex: 1;
+        }
+
+        #list-container .favorite-button,
+        #list-container .trash-button {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: none;
+        }
+
+        #list-container .favorite-button:hover {
+            background: var(--warning);
+            border-color: var(--warning);
+            color: white;
+            transform: none;
+        }
+
+        #list-container .favorite-button.active {
+            background: var(--warning);
+            border-color: var(--warning);
+            color: white;
+        }
+
+        #list-container .trash-button:hover {
+            background: var(--error);
+            border-color: var(--error);
+            color: white;
+            transform: none;
+        }
+
+        /* Floating Media Player */
+        .floating-media-container {
+            display: none;
+            position: fixed;
+            inset: 0;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 98;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .floating-media {
+            display: flex;
+            flex-direction: column;
+            width: 85%;
+            height: 85%;
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .floating-media-header {
+            display: flex;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(139, 92, 246, 0.1);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .floating-media-header .button {
+            flex: 1;
+        }
+
+        .floating-media object,
+        .floating-media-object {
+            flex-grow: 1;
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Floating Action Buttons */
+        .floating-button-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+            z-index: 97;
+        }
+
+        .floating-button {
+            width: 50px;
+            height: 50px;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 1.125rem;
+        }
+
+        #float-arrow-icon {
+            transition: transform 0.3s ease;
+        }
+
+        #float-arrow-icon.flipped {
+            transform: rotate(180deg);
+        }
+
+        /* Settings & Add Item Modals */
+        #settings-container,
+        #add-item-container {
+            display: none;
+            position: fixed;
+            inset: 0;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 98;
+            padding: 1rem;
+        }
+
+        .settings-modal,
+        .add-item-modal {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            background: var(--surface-solid);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .settings-header,
+        .add-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            background: rgba(139, 92, 246, 0.15);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-header span,
+        .add-item-header span {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .settings-header .seperator,
+        .add-item-header .seperator {
+            flex-grow: 1;
+        }
+
+        #settings-close,
+        #add-item-close {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 0.5rem;
+            color: var(--text);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #settings-close:hover,
+        #add-item-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .settings-inner-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .settings-sidebar {
+            width: 180px;
+            background: rgba(0, 0, 0, 0.3);
+            border-right: 1px solid var(--border);
+            padding: 1rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-muted);
+            font-weight: 500;
+            background: transparent;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--text);
+        }
+
+        .sidebar-item.active {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--text);
+        }
+
+        .settings-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .settings-page {
+            padding: 1.5rem;
+            display: none;
+        }
+
+        .settings-page:first-child {
+            display: block;
+        }
+
+        .settings-page-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            color: var(--text);
+        }
+
+        /* Form Elements */
+        #theme-selector,
+        #add-item-type,
+        input[type="text"],
+        input[type="url"],
+        input[type="number"],
+        input[type="email"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            margin-bottom: 1rem;
+        }
+
+        #theme-selector,
+        #add-item-type {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23c4b5fd' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+
+        #theme-selector:focus,
+        #add-item-type:focus,
+        input[type="text"]:focus,
+        input[type="url"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+        }
+
+        #theme-selector option,
+        #add-item-type option {
+            background: var(--surface-solid);
+            color: var(--text);
+        }
+
+        /* Toggle Switch */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .slider {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+
+        .slider input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-track {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 26px;
+            transition: all 0.3s ease;
+        }
+
+        .slider-track::before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--text);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider input:checked + .slider-track {
+            background-color: var(--primary);
+        }
+
+        .slider input:checked + .slider-track::before {
+            transform: translateX(22px);
+        }
+
+        /* Add Item Modal */
+        .add-item-inner-container {
+            padding: 1.5rem;
+        }
+
+        .add-item-form .form-group {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Notifications */
+        #notification-holder {
+            position: fixed;
+            bottom: 6rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 99;
+        }
+
+        .notification {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+            animation: slide-up 0.5s ease;
+        }
+
+        @keyframes slide-up {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slide-out {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #34c759, #30b350);
+        }
+
+        .notification.warning {
+            background: linear-gradient(135deg, #ff9500, #ff8000);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #ff3b30, #e0342b);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .topbar-toggle {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            #list-container {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .settings-inner-container {
+                flex-direction: column;
+            }
+
+            .settings-sidebar {
+                width: 100%;
+                flex-direction: row;
+                justify-content: center;
+                padding: 0.75rem;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                gap: 0.75rem;
+            }
+
+            .sidebar-item {
+                padding: 0.75rem;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                justify-content: center;
+            }
+
+            .sidebar-item i {
+                font-size: 1.25rem;
+            }
+
+            .sidebar-item span {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.25rem;
+            }
+
+            #list-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .topbar-toggle span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body id="root">
+    <header class="topbar-container">
+        <div class="topbar">
+            <div class="logo">Arcade Hub</div>
+            <div class="topbar-toggle topbar-toggle-selected" data-category="games">
+                <i class="fas fa-gamepad"></i>
+                <span>Games</span>
+            </div>
+            <div class="topbar-toggle" data-category="movies">
+                <i class="fas fa-film"></i>
+                <span>Movies</span>
+            </div>
+            <input class="search-input" placeholder="Search" id="search">
+        </div>
+    </header>
+    <div class="floating-media-container">
+        <div class="floating-media">
+            <div class="floating-media-header">
+                <div class="button" id="floating-media-fullscreen">Fullscreen</div>
+                <div class="button" id="floating-media-close">Close</div>
+            </div>
+            <object type="text/html" data="" class="floating-media-object"></object>
+        </div>
+    </div>
+    <div class="floating-button-container">
+        <div class="button floating-button" id="add-item-button">
+            <i class="fa fa-plus"></i>
+        </div>
+        <div class="button floating-button" id="settings-button">
+            <i class="fa fa-cog"></i>
+        </div>
+        <div class="button floating-button" id="jump-button">
+            <i class="fa fa-arrow-down" id="float-arrow-icon"></i>
+        </div>
+    </div>
+    <div id="list-container"></div>
+    <div id="add-item-container">
+        <div class="add-item-modal">
+            <div class="add-item-header">
+                <span>Add Item</span>
+                <div class="seperator"></div>
+                <i class="fa fa-close" id="add-item-close"></i>
+            </div>
+            <div class="add-item-inner-container">
+                <div class="add-item-form">
+                    <div class="form-group">
+                        <span class="settings-page-title">Item Type:</span>
+                        <br/>
+                        <select id="add-item-type">
+                            <option value="games">Games</option>
+                            <option value="movies">Movies</option>
+                            <option value="proxies">Proxies</option>
+                        </select>
+                        <br/>
+                        <span class="settings-page-title">Name:</span>
+                        <br/>
+                        <input type="text" placeholder="Name" id="add-item-name">
+                        <br/>
+                        <span class="settings-page-title">URL:</span>
+                        <br/>
+                        <input type="text" placeholder="URL" id="add-item-url">
+                    </div>
+                </div>
+                <br/>
+                <div class="button" id="add-item-submit">Add Item</div>
+            </div>
+        </div>
+    </div>
+    <div id="settings-container">
+        <div class="settings-modal">
+            <div class="settings-header">
+                <span>Settings</span>
+                <div class="seperator"></div>
+                <i class="fa fa-close" id="settings-close"></i>
+            </div>
+            <div class="settings-inner-container">
+                <div class="settings-sidebar">
+                    <div class="sidebar-item active">
+                        <i class="fa fa-cog"></i>
+                        <span>General</span>
+                    </div>
+                    <div class="sidebar-item">
+                        <i class="fa fa-paintbrush"></i>
+                        <span>Theme</span>
+                    </div>
+                    <div class="sidebar-item">
+                        <i class="fa fa-circle-info"></i>
+                        <span>About</span>
+                    </div>
+                </div>
+                <div class="settings-content">
+                    <div class="settings-page">
+                        <div class="settings-page-title">General</div>
+                        <br/>
+                        <div class="button" id="reset-cdn-list">Reset CDN List</div>
+                        <br/>
+                        <br/>
+                        <div class="slider-container">
+                            Panic Key Enabled:
+                            <label class="slider">
+                                <input type="checkbox" id="panic-key-toggle" />
+                                <span class="slider-track"></span>
+                            </label>
+                        </div>
+                        <br/>
+                        <div class="slider-container">
+                            Panic Key:
+                            <input class="search-input" id="panic-key" value="`" maxlength="1">
+                        </div>   
+                        <br/>
+                        <div class="slider-container">
+                            Panic Key URL:
+                            <input class="search-input" id="panic-key-url" value="https://www.google.com">
+                        </div>
+                        <br/>
+                        <br/>
+                        <div class="slider-container">
+                            Open Media in Mini-Window:
+                            <label class="slider">
+                                <input type="checkbox" id="mini-window-toggle" />
+                                <span class="slider-track"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="settings-page">
+                        <div class="settings-page-title">Theme</div>
+                        <br/>
+                        <select id="theme-selector">
+                            <option value="system-default">System Default</option>
+                            <option value="light">Light Mode</option>
+                            <option value="dark">Dark Mode</option>
+                            <option value="catppuccin-macchiato">Catppuccin Macchiato</option>
+                            <option value="catppuccin-mocha">Catppuccin Mocha</option>
+                            <option value="oxocarbon-light">Oxocarbon Light</option>
+                            <option value="oxocarbon-dark">Oxocarbon Dark</option>
+                            <option value="arcadehub-v1">ArcadeHub v1/v2</option>
+                        </select>
+                        <br/>
+                        <br/>
+                        <div class="slider-container">
+                            Grid View:
+                            <label class="slider">
+                                <input type="checkbox" id="grid-view-toggle" />
+                                <span class="slider-track"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="settings-page">
+                        <div class="settings-page-title">About</div>
+                        <br/>
+                        <span>
+                            ArcadeHub is just a fun side-project, where I try to create a simple and easy-to-use web app for managing lists of games, movies, and proxies to play on the web. If you have any feedback or suggestions, please let me know by clicking the feedback button in the topbar.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="notification-holder"></div>
+
+    <script>
+        // =============================================
+        // ARCADE HUB - MODIFIED TO USE OBJECT TAG INSTEAD OF IFRAME
+        // =============================================
+        
+        window.ArcadeHubItems = window.ArcadeHubItems || {};
+
+        // =============================================
+        // SETTINGS HANDLER
+        // =============================================
+        class SettingsHandler {
+            constructor() {
+                this.settings = {};
+            }
+
+            load() {
+                const saved = localStorage.getItem('arcadehub-settings');
+                if (saved) {
+                    try {
+                        this.settings = JSON.parse(saved);
+                    } catch (e) {
+                        this.settings = {};
+                    }
+                }
+            }
+
+            save() {
+                localStorage.setItem('arcadehub-settings', JSON.stringify(this.settings));
+            }
+
+            get(key) {
+                return this.settings[key];
+            }
+
+            set(key, value) {
+                this.settings[key] = value;
+                this.save();
+                EventHandler.emit('settingsChange', { key, value });
+            }
+        }
+
+        // =============================================
+        // NOTIFICATION HANDLER
+        // =============================================
+        class NotificationHandler {
+            constructor() {
+                this.holder = document.getElementById('notification-holder');
+            }
+
+            add(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                this.holder.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.style.animation = 'slide-out 0.5s ease forwards';
+                    setTimeout(() => notification.remove(), 500);
+                }, 3000);
+            }
+        }
+
+        // =============================================
+        // EVENT HANDLER
+        // =============================================
+        class EventHandler {
+            static listeners = {};
+
+            static subscribe(event, callback) {
+                if (!this.listeners[event]) {
+                    this.listeners[event] = [];
+                }
+                this.listeners[event].push(callback);
+            }
+
+            static emit(event, data) {
+                if (this.listeners[event]) {
+                    this.listeners[event].forEach(callback => callback(data));
+                }
+            }
+        }
+
+        // =============================================
+        // PANIC KEY HANDLER
+        // =============================================
+        class PanicKeyHandler {
+            constructor(notificationHandler, settingsHandler) {
+                this.notificationHandler = notificationHandler;
+                this.settingsHandler = settingsHandler;
+                this.enabled = false;
+                this.key = settingsHandler.get('panicKey') || '`';
+                this.boundHandler = this.handleKeyPress.bind(this);
+            }
+
+            enable() {
+                if (!this.enabled) {
+                    document.addEventListener('keydown', this.boundHandler);
+                    this.enabled = true;
+                }
+            }
+
+            disable() {
+                if (this.enabled) {
+                    document.removeEventListener('keydown', this.boundHandler);
+                    this.enabled = false;
+                }
+            }
+
+            toggle() {
+                if (this.enabled) {
+                    this.disable();
+                    this.settingsHandler.set('panicKeyEnabled', false);
+                    this.notificationHandler.add('Panic key disabled', 'warning');
+                } else {
+                    this.enable();
+                    this.settingsHandler.set('panicKeyEnabled', true);
+                    this.notificationHandler.add('Panic key enabled', 'success');
+                }
+            }
+
+            setKey(key) {
+                this.key = key;
+                this.settingsHandler.set('panicKey', key);
+            }
+
+            handleKeyPress(e) {
+                if (e.key === this.key) {
+                    const url = this.settingsHandler.get('panicKeyUrl') || 'https://www.google.com';
+                    window.location.href = url;
+                }
+            }
+        }
+
+        // =============================================
+        // ITEMS UI - USES EMBED INSTEAD OF IFRAME FOR ABOUT:BLANK
+        // =============================================
+        class ItemsUI {
+            constructor(items, notificationHandler, settingsHandler) {
+                this.items = items;
+                this.notificationHandler = notificationHandler;
+                this.settingsHandler = settingsHandler;
+                this.container = document.getElementById('list-container');
+                this.favorites = JSON.parse(localStorage.getItem('arcadehub-favorites') || '[]');
+                this.customItems = JSON.parse(localStorage.getItem('arcadehub-custom-items') || '{}');
+                
+                this.setupFloatingMedia();
+                this.populate(items);
+            }
+
+            setupFloatingMedia() {
+                const floatingMediaContainer = document.querySelector('.floating-media-container');
+                const floatingMediaObject = document.querySelector('.floating-media-object');
+                const closeBtn = document.getElementById('floating-media-close');
+                const fullscreenBtn = document.getElementById('floating-media-fullscreen');
+
+                closeBtn.addEventListener('click', () => {
+                    floatingMediaContainer.style.display = 'none';
+                    floatingMediaObject.data = '';
+                });
+
+                fullscreenBtn.addEventListener('click', () => {
+                    if (floatingMediaObject.requestFullscreen) {
+                        floatingMediaObject.requestFullscreen();
+                    } else if (floatingMediaObject.webkitRequestFullscreen) {
+                        floatingMediaObject.webkitRequestFullscreen();
+                    }
+                });
+            }
+
+            getCurrentCategory() {
+                const selected = document.querySelector('.topbar-toggle-selected');
+                if (selected) {
+                    const span = selected.querySelector('span');
+                    if (span) {
+                        return span.textContent.toLowerCase();
+                    }
+                }
+                return 'games';
+            }
+
+            // Helper to convert category to the CDN's capitalized format
+            getCDNCategoryKey(category) {
+                const categoryMap = {
+                    'games': 'Games',
+                    'movies': 'Movies',
+                    'proxies': 'Proxies'
+                };
+                return categoryMap[category] || category;
+            }
+
+            getFilteredItems() {
+                const category = this.getCurrentCategory();
+                const cdnKey = this.getCDNCategoryKey(category);
+                const searchTerm = document.getElementById('search').value.toLowerCase();
+                
+                let allItems = [];
+                
+                // Get items from CDN (using capitalized key like "Games", "Movies", "Proxies")
+                if (window.ArcadeHubItems && window.ArcadeHubItems[cdnKey]) {
+                    allItems = [...window.ArcadeHubItems[cdnKey]];
+                }
+                
+                // Add custom items (stored with lowercase key)
+                if (this.customItems[category]) {
+                    allItems = [...allItems, ...this.customItems[category]];
+                }
+
+                // Filter by search term
+                if (searchTerm) {
+                    allItems = allItems.filter(item => 
+                        item.name.toLowerCase().includes(searchTerm)
+                    );
+                }
+
+                return allItems;
+            }
+
+            populate(items) {
+                this.container.innerHTML = '';
+                const filteredItems = this.getFilteredItems();
+
+                filteredItems.forEach(item => {
+                    const itemEl = this.createItemElement(item);
+                    this.container.appendChild(itemEl);
+                });
+            }
+
+            createItemElement(item) {
+                const container = document.createElement('div');
+                container.className = 'item-container';
+
+                // Name
+                const name = document.createElement('span');
+                name.textContent = item.name;
+                container.appendChild(name);
+
+                // Separator
+                const sep = document.createElement('div');
+                sep.className = 'seperator';
+                container.appendChild(sep);
+
+                // Button Container
+                const btnContainer = document.createElement('div');
+                btnContainer.className = 'button-container';
+
+                // Play Button
+                const playBtn = document.createElement('div');
+                playBtn.className = 'button play-button';
+                playBtn.innerHTML = '<i class="fa fa-play"></i> Play';
+                playBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.playItem(item);
+                });
+                btnContainer.appendChild(playBtn);
+
+                // Favorite Button
+                const favBtn = document.createElement('div');
+                favBtn.className = 'button favorite-button';
+                if (this.favorites.includes(item.url || item.link)) {
+                    favBtn.classList.add('active');
+                }
+                favBtn.innerHTML = '<i class="fa fa-star"></i>';
+                favBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleFavorite(item, favBtn);
+                });
+                btnContainer.appendChild(favBtn);
+
+                container.appendChild(btnContainer);
+
+                // Click on card to play
+                container.addEventListener('click', () => {
+                    this.playItem(item);
+                });
+
+                return container;
+            }
+
+            /**
+             * MODIFIED: Opens game using OBJECT tag instead of IFRAME in about:blank
+             */
+            playItem(item) {
+                const url = item.url || item.link;
+                
+                if (!url) {
+                    this.notificationHandler.add('No URL found for this item', 'error');
+                    return;
+                }
+
+                const useMiniWindow = this.settingsHandler.get('miniWindow');
+
+                if (useMiniWindow) {
+                    // Use floating media player with object tag
+                    const floatingMediaContainer = document.querySelector('.floating-media-container');
+                    const floatingMediaObject = document.querySelector('.floating-media-object');
+                    floatingMediaObject.data = url;
+                    floatingMediaContainer.style.display = 'flex';
+                } else {
+                    // Open in about:blank tab using OBJECT instead of IFRAME
+                    this.openInAboutBlankWithEmbed(url, item.name);
+                }
+            }
+
+            /**
+             * Opens the URL in an about:blank tab using OBJECT tag (proper alternative to iframe)
+             */
+            openInAboutBlankWithEmbed(url, title = 'Arcade Hub') {
+                const newWindow = window.open('about:blank', '_blank');
+                
+                if (!newWindow) {
+                    this.notificationHandler.add('Pop-up blocked! Please allow pop-ups for this site.', 'error');
+                    return;
+                }
+
+                // Write HTML with OBJECT tag instead of IFRAME
+                // The <object> tag with type="text/html" is the proper way to embed HTML content
+                newWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>${this.escapeHtml(title)}</title>
+                        <style>
+                            * {
+                                margin: 0;
+                                padding: 0;
+                                box-sizing: border-box;
+                            }
+                            html, body {
+                                width: 100%;
+                                height: 100%;
+                                overflow: hidden;
+                                background: #000;
+                            }
+                            object {
+                                width: 100%;
+                                height: 100%;
+                                border: none;
+                                display: block;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <object type="text/html" data="${this.escapeHtml(url)}" width="100%" height="100%"></object>
+                    </body>
+                    </html>
+                `);
+                newWindow.document.close();
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            toggleFavorite(item, btn) {
+                const url = item.url || item.link;
+                const index = this.favorites.indexOf(url);
+                
+                if (index > -1) {
+                    this.favorites.splice(index, 1);
+                    btn.classList.remove('active');
+                    this.notificationHandler.add('Removed from favorites', 'warning');
+                } else {
+                    this.favorites.push(url);
+                    btn.classList.add('active');
+                    this.notificationHandler.add('Added to favorites', 'success');
+                }
+                
+                localStorage.setItem('arcadehub-favorites', JSON.stringify(this.favorites));
+            }
+
+            addCustomItem(category, item) {
+                if (!this.customItems[category]) {
+                    this.customItems[category] = [];
+                }
+                this.customItems[category].push(item);
+                localStorage.setItem('arcadehub-custom-items', JSON.stringify(this.customItems));
+                this.populate(window.ArcadeHubItems);
+            }
+        }
+
+        // =============================================
+        // SETTINGS MODAL
+        // =============================================
+        class SettingsModal {
+            constructor(settingsHandler, notificationHandler) {
+                this.settingsHandler = settingsHandler;
+                this.notificationHandler = notificationHandler;
+                this.container = document.getElementById('settings-container');
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                document.getElementById('settings-close').addEventListener('click', () => {
+                    this.close();
+                });
+
+                // Sidebar navigation
+                const sidebarItems = document.querySelectorAll('.sidebar-item');
+                const pages = document.querySelectorAll('.settings-page');
+
+                sidebarItems.forEach((item, index) => {
+                    item.addEventListener('click', () => {
+                        sidebarItems.forEach(i => i.classList.remove('active'));
+                        item.classList.add('active');
+                        pages.forEach(p => p.style.display = 'none');
+                        if (pages[index]) {
+                            pages[index].style.display = 'block';
+                        }
+                    });
+                });
+
+                // Theme selector
+                document.getElementById('theme-selector').addEventListener('change', (e) => {
+                    this.settingsHandler.set('theme', e.target.value);
+                    this.notificationHandler.add('Theme changed to: ' + e.target.value, 'success');
+                });
+
+                // Close on background click
+                this.container.addEventListener('click', (e) => {
+                    if (e.target === this.container) {
+                        this.close();
+                    }
+                });
+            }
+
+            open() {
+                this.container.style.display = 'flex';
+                // Set current theme in selector
+                const themeSelector = document.getElementById('theme-selector');
+                const currentTheme = this.settingsHandler.get('theme') || 'dark';
+                themeSelector.value = currentTheme;
+            }
+
+            close() {
+                this.container.style.display = 'none';
+            }
+        }
+
+        // =============================================
+        // ADD ITEM MODAL
+        // =============================================
+        class AddItemModal {
+            constructor(itemsUI, settingsHandler, notificationHandler) {
+                this.itemsUI = itemsUI;
+                this.settingsHandler = settingsHandler;
+                this.notificationHandler = notificationHandler;
+                this.container = document.getElementById('add-item-container');
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                document.getElementById('add-item-button').addEventListener('click', () => {
+                    this.open();
+                });
+
+                document.getElementById('add-item-close').addEventListener('click', () => {
+                    this.close();
+                });
+
+                document.getElementById('add-item-submit').addEventListener('click', () => {
+                    this.submit();
+                });
+
+                this.container.addEventListener('click', (e) => {
+                    if (e.target === this.container) {
+                        this.close();
+                    }
+                });
+            }
+
+            open() {
+                this.container.style.display = 'flex';
+            }
+
+            close() {
+                this.container.style.display = 'none';
+                document.getElementById('add-item-name').value = '';
+                document.getElementById('add-item-url').value = '';
+            }
+
+            submit() {
+                const type = document.getElementById('add-item-type').value;
+                const name = document.getElementById('add-item-name').value.trim();
+                const url = document.getElementById('add-item-url').value.trim();
+
+                if (!name || !url) {
+                    this.notificationHandler.add('Please fill in all fields', 'error');
+                    return;
+                }
+
+                const item = {
+                    name: name,
+                    url: url
+                };
+
+                this.itemsUI.addCustomItem(type, item);
+                this.notificationHandler.add('Item added successfully!', 'success');
+                this.close();
+            }
+        }
+
+        // =============================================
+        // MAIN APP
+        // =============================================
+        class ArcadeHubApp {
+            constructor() {
+                this.app = document.getElementById("root");
+                this.settingsHandler = new SettingsHandler();
+                this.notificationHandler = new NotificationHandler();
+                this.settingsHandler.load();
+
+                this.panicKeyHandler = new PanicKeyHandler(this.notificationHandler, this.settingsHandler);
+
+                // Initialize panic key settings
+                if (this.settingsHandler.get("panicKeyEnabled") === undefined) {
+                    this.settingsHandler.set("panicKeyEnabled", true);
+                }
+
+                if (this.settingsHandler.get("panicKeyEnabled")) {
+                    document.getElementById("panic-key-toggle").checked = true;
+                    this.panicKeyHandler.enable();
+                }
+
+                if (this.settingsHandler.get("panicKeyUrl")) {
+                    document.getElementById("panic-key-url").value = this.settingsHandler.get("panicKeyUrl");
+                }
+
+                if (this.settingsHandler.get("panicKey")) {
+                    document.getElementById("panic-key").value = this.settingsHandler.get("panicKey");
+                }
+
+                if (this.settingsHandler.get("gridView")) {
+                    document.getElementById("grid-view-toggle").checked = this.settingsHandler.get("gridView");
+                }
+
+                if (!this.settingsHandler.get("theme")) {
+                    this.settingsHandler.set("theme", "dark");
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                        this.settingsHandler.set("theme", "light");
+                    }
+                }
+
+                if (this.settingsHandler.get("miniWindow")) {
+                    document.getElementById("mini-window-toggle").checked = true;
+                }
+
+                this.app.classList.add("theme-" + this.settingsHandler.get("theme"));
+                this.settingsModal = new SettingsModal(this.settingsHandler, this.notificationHandler);
+
+                // Scroll button
+                document.addEventListener("scroll", function () {
+                    const icon = document.getElementById("float-arrow-icon");
+                    if (window.scrollY < 100) {
+                        icon.classList.remove('flipped');
+                    } else {
+                        icon.classList.add('flipped');
+                    }
+                });
+
+                document.getElementById("settings-button").addEventListener("click", () => {
+                    this.settingsModal.open();
+                });
+
+                document.getElementById("jump-button").addEventListener("click", function () {
+                    const scrollPosition = window.scrollY;
+                    const docHeight = document.documentElement.scrollHeight;
+                    if (scrollPosition < 100) {
+                        window.scrollTo({ top: docHeight, behavior: 'smooth' });
+                    } else {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+
+                // Search
+                document.getElementById("search").addEventListener("input", () => {
+                    if (this.items) {
+                        this.items.populate(window.ArcadeHubItems);
+                    }
+                });
+
+                // Category toggles
+                const toggles = document.querySelectorAll(".topbar-toggle");
+                toggles.forEach(element => {
+                    element.addEventListener("click", (event) => {
+                        toggles.forEach(toggle => toggle.classList.remove("topbar-toggle-selected"));
+                        event.currentTarget.classList.add("topbar-toggle-selected");
+                        document.getElementById("search").value = "";
+                        if (this.items) {
+                            this.items.populate(window.ArcadeHubItems);
+                        }
+                    });
+                });
+
+                // Panic key controls
+                document.getElementById("panic-key-toggle").addEventListener("click", () => {
+                    this.panicKeyHandler.toggle();
+                });
+
+                document.getElementById("panic-key").addEventListener("blur", (event) => {
+                    this.panicKeyHandler.setKey(event.target.value);
+                    this.notificationHandler.add("Panic key set as: " + event.target.value, "success");
+                });
+
+                document.getElementById("panic-key-url").addEventListener("input", (event) => {
+                    this.settingsHandler.set("panicKeyUrl", event.target.value);
+                });
+
+                document.getElementById("mini-window-toggle").addEventListener("change", (event) => {
+                    this.settingsHandler.set("miniWindow", event.target.checked);
+                });
+
+                // Load CDN
+                this.loadCDN().then(() => {
+                    this.items = new ItemsUI(window.ArcadeHubItems, this.notificationHandler, this.settingsHandler);
+                    this.addItemModal = new AddItemModal(this.items, this.settingsHandler, this.notificationHandler);
+
+                    document.getElementById("grid-view-toggle").addEventListener("change", (event) => {
+                        this.settingsHandler.set("gridView", event.target.checked);
+                        this.items.populate(window.ArcadeHubItems);
+                    });
+
+                    EventHandler.subscribe("settingsChange", this.onSettingChange.bind(this));
+
+                    document.getElementById("reset-cdn-list").addEventListener("click", () => {
+                        this.loadCDN().then(() => {
+                            this.items.populate(window.ArcadeHubItems);
+                        });
+                    });
+                }).catch(error => {
+                    console.error(error);
+                    this.notificationHandler.add("Failed to load CDN, please ensure connection to the internet and retry!", "error");
+                });
+            }
+
+            onSettingChange() {
+                this.app.className = "";
+                this.app.classList.add("theme-" + this.settingsHandler.get("theme"));
+
+                if (this.settingsHandler.get("panicKeyEnabled")) {
+                    this.panicKeyHandler.enable();
+                } else {
+                    this.panicKeyHandler.disable();
+                }
+            }
+
+            async fetchScript(url) {
+                try {
+                    const response = await fetch(url + "?" + Math.random());
+                    const data = await response.text();
+                    const script = document.createElement("script");
+                    script.innerHTML = data;
+                    document.body.appendChild(script);
+                } catch (error) {
+                    console.error(error);
+                    throw new Error("Error fetching script: " + url);
+                }
+            }
+
+            async loadCDN() {
+                try {
+                    await Promise.all([
+                        this.fetchScript("https://raw.githubusercontent.com/arcadehubgaming/cdn-list/refs/heads/main/games.js"),
+                        this.fetchScript("https://raw.githubusercontent.com/arcadehubgaming/cdn-list/refs/heads/main/movies.js"),
+                        this.fetchScript("https://raw.githubusercontent.com/arcadehubgaming/cdn-list/refs/heads/main/proxies.js")
+                    ]);
+                    this.notificationHandler.add("CDN successfully fetched!", "success");
+                } catch (error) {
+                    this.notificationHandler.add("Fetch failed, please ensure connection to the internet and retry!", "error");
+                    throw error;
+                }
+            }
+        }
+
+        // Initialize app
+        document.addEventListener("DOMContentLoaded", () => {
+            window.app = new ArcadeHubApp();
+        });
+    </script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W2Y1V4TGEX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-W2Y1V4TGEX');
+    </script>
+</body>
+</html>
